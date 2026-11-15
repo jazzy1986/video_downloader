@@ -30,7 +30,7 @@ DEFAULT_OUT = Path(__file__).resolve().parent / "downloads"
 class App(tk.Tk):
     def __init__(self):
         super().__init__()
-        self.title("Video Downloader")
+        self.title(f"Video Downloader v{dl.__version__}")
         self.geometry("560x560")
         self.q = queue.Queue()
         self.busy = False

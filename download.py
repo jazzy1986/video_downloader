@@ -19,6 +19,8 @@ from pathlib import Path
 import imageio_ffmpeg
 from yt_dlp import YoutubeDL
 
+__version__ = "1.0.0"
+
 
 def find_ffmpeg():
     """Locate ffmpeg: a loose ffmpeg.exe beside a packaged exe wins,
@@ -140,6 +142,8 @@ def cli_progress_hook(d):
 
 def main():
     p = argparse.ArgumentParser(description="Download videos with yt-dlp")
+    p.add_argument("--version", action="version",
+                   version=f"%(prog)s {__version__}")
     p.add_argument("urls", nargs="*",
                    help="video URL(s), or a search term (non-URL input searches YouTube)")
     p.add_argument("--batch", metavar="FILE", help="text file with one URL per line")
