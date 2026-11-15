@@ -1,22 +1,22 @@
 # Video downloader helpers.
 # Load with: . "D:\projects\video_downloader\vd.ps1"
 #
-#   down "https://www.youtube.com/watch?v=..."     - download video (mp4, 1080p default)
-#   down "URL" -q 720                              - cap quality at 720p
-#   down "URL" --audio-only                        - extract mp3
-#   down "URL" -o D:\videos                        - custom output folder
-#   down "bigbang bang bang bang"                  - search YouTube, preview + confirm top result
-#   vdown                                           - open the GUI
+#   vdown "https://www.youtube.com/watch?v=..."     - download video (mp4, 1080p default)
+#   vdown "URL" -q 720                              - cap quality at 720p
+#   vdown "URL" --audio-only                        - extract mp3
+#   vdown "URL" -o D:\videos                        - custom output folder
+#   vdown "bigbang bang bang bang"                  - search YouTube, preview + confirm top result
+#   vgui                                            - open the GUI
 #   vbuild                                          - build dist\VideoDownloader.exe, then bump version.json minor
 
 $VD_DIR = "D:\projects\video_downloader"
 $VD_VERSION_FILE = Join-Path $VD_DIR "version.json"
 
-function down {
+function vdown {
     & "$VD_DIR\.venv\Scripts\python.exe" "$VD_DIR\download.py" @args
 }
 
-function vdown {
+function vgui {
     & "$VD_DIR\.venv\Scripts\pythonw.exe" "$VD_DIR\gui.py"
 }
 
