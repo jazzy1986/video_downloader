@@ -8,18 +8,35 @@ Usage:
 """
 
 import argparse
+import json
 import sys
 
 if sys.stdout is not None:
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 if sys.stderr is not None:
     sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+from datetime import datetime
 from pathlib import Path
 
 import imageio_ffmpeg
 from yt_dlp import YoutubeDL
 
-__version__ = "1.0.0"
+def _load_version():
+    try:
+        base = (Path(sys._MEIPASS) if getattr(sys, "frozen", False)
+                else Path(__file__).resolve().parent)
+        return json.loads((base / "version.json").read_text())["version"]
+    except Exception:
+        return "1.0.0"
+
+
+__version__ = _load_version()
+LOG_PATH = Path.home() / ".video_downloader.log"
+
+
+def log_failure(url, err):
+    with open(LOG_PATH, "a", encoding="utf-8") as f:
+        f.write(f"{datetime.now():%Y-%m-%d %H:%M:%S}  {url}\n    {err}\n")
 
 
 def find_ffmpeg():
@@ -77,9 +94,8 @@ def confirm(ydl, query, assume_yes):
 def build_opts(out_dir="downloads", audio_only=False, quality=None,
                progress_hook=None):
     opts = {
-        "outtmpl": str(Path(out_dir) / "%(title)s.%(ext)s"),
+        "outtmpl": str(Path(out_dir) / "%(title).100s.%(ext)s"),
         "noplaylist": True,
-        "extract_flat": True,
         "quiet": True,
         "logger": Logger(),
         "progress_hooks": [progress_hook or cli_progress_hook],
@@ -96,8 +112,12 @@ def build_opts(out_dir="downloads", audio_only=False, quality=None,
         })
     else:
         q = 1080 if quality is None else quality
+        # Portrait videos have height > width, so cap whichever dimension is
+        # the short side; fall back to best so exotic format lists still work.
         opts["format"] = ("bestvideo+bestaudio/best" if q == 0 else
-                          f"bestvideo[height<={q}]+bestaudio/best[height<={q}]")
+                          f"bestvideo[height<={q}]+bestaudio/"
+                          f"bestvideo[width<={q}]+bestaudio/"
+                          "bestvideo+bestaudio/best")
         opts["merge_output_format"] = "mp4"
     return opts
 
@@ -110,13 +130,15 @@ def search(query, limit=5):
 
 
 def download(urls, out_dir="downloads", audio_only=False, quality=None,
-             assume_yes=False, progress_hook=None):
+             assume_yes=False, progress_hook=None, item_hook=None):
     opts = build_opts(out_dir, audio_only, quality, progress_hook)
     Path(out_dir).mkdir(parents=True, exist_ok=True)
 
     failed = []
     with YoutubeDL(opts) as ydl:
-        for url in urls:
+        for i, url in enumerate(urls, 1):
+            if item_hook:
+                item_hook(i, len(urls), url)
             try:
                 if not url.startswith(("http://", "https://")):
                     url = confirm(ydl, url, assume_yes)
@@ -126,7 +148,8 @@ def download(urls, out_dir="downloads", audio_only=False, quality=None,
                 ydl.download([url])
             except Exception as e:
                 print(f"\nFAILED: {url} ({e})")
-                failed.append(url)
+                failed.append((url, str(e)))
+                log_failure(url, e)
     return failed
 
 
