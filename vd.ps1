@@ -7,7 +7,7 @@
 #   vdown "URL" -o D:\videos                        - custom output folder
 #   vdown "bigbang bang bang bang"                  - search YouTube, preview + confirm top result
 #   vgui                                            - open the GUI
-#   vbuild                                          - build dist\VideoDownloader.exe, then bump version.json minor
+#   vbuild                                          - build dist\VideoDownloader.exe, then bump version.json patch
 
 $VD_DIR = "D:\projects\video_downloader"
 $VD_VERSION_FILE = Join-Path $VD_DIR "version.json"
@@ -26,8 +26,7 @@ function vbuild {
     $v = (Get-Content $VD_VERSION_FILE -Raw | ConvertFrom-Json).version
     $p = $v -split '\.'
     if ($p.Count -ne 3) { throw "Unexpected version format: $v" }
-    $p[1] = [int]$p[1] + 1
-    $p[2] = 0
+    $p[2] = [int]$p[2] + 1
     $new = $p -join '.'
     @{ version = $new } | ConvertTo-Json | Set-Content $VD_VERSION_FILE
     Write-Host "Version: $v -> $new (next build)"

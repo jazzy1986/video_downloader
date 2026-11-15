@@ -85,7 +85,7 @@ dist\ffmpeg.exe            copied beside the exe
 
 Share the whole `dist` folder. The exe uses the `ffmpeg.exe` beside it, and falls back to the bundled `imageio-ffmpeg` binary when run unpackaged.
 
-Versioning: the version is stored in `version.json` and appears in the window title and in `--version`. `vbuild` builds with the current version, then bumps the minor number for the next build (for example, 1.0.1 becomes 1.1.0). The built exe keeps the version it was built with. If the build fails, the version isn't bumped.
+Versioning: the version is stored in `version.json` and appears in the window title and in `--version`. `vbuild` builds with the current version, then bumps the last number for the next build (for example, 1.0.1 becomes 1.0.2). The built exe keeps the version it was built with. If the build fails, the version isn't bumped.
 
 ## Files and settings
 
