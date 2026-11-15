@@ -23,9 +23,14 @@ from yt_dlp import YoutubeDL
 
 def _load_version():
     try:
-        base = (Path(sys._MEIPASS) if getattr(sys, "frozen", False)
-                else Path(__file__).resolve().parent)
-        return json.loads((base / "version.json").read_text())["version"]
+        if getattr(sys, "frozen", False):
+            for base in (Path(sys._MEIPASS), Path(sys.executable).parent):
+                p = base / "version.json"
+                if p.exists():
+                    return json.loads(p.read_text())["version"]
+            return "1.0.0"
+        p = Path(__file__).resolve().parent / "version.json"
+        return json.loads(p.read_text())["version"]
     except Exception:
         return "1.0.0"
 

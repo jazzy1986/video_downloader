@@ -19,7 +19,7 @@ ffmpeg comes bundled through `imageio-ffmpeg`, so no separate install is needed.
 
 Open it with `vgui` (see [PowerShell helpers](#powershell-helpers)), or run `.venv\Scripts\pythonw.exe gui.py` from the project folder. `pythonw` opens no console window.
 
-- **URL or search**: paste a URL and press **Add** or Enter. Any other text runs a YouTube search and previews the top result. **Download** queues the preview and **Skip** discards it.
+- **URL or search**: paste a URL and press **Add** or Enter. Any other text runs a YouTube search and previews the top result. **Add to Queue** adds the preview to the queue and **Clear** discards it.
 - **Queue**: each item has its own progress bar and percentage. **✕** removes an item and **Clear** empties the queue. Both are ignored while a download is running.
 - **Quality**: 1080p by default, or 720p, 480p, or Best. **Audio only (mp3)** ignores quality and saves MP3 at 192 kbps.
 - **Save to**: defaults to your Downloads folder. **Browse...** picks a folder and remembers it.
